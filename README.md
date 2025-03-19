@@ -133,6 +133,9 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 
 ## Release Notes
 
+### 0.1.5 Release
+- Draft release
+
 ### 0.1.4 Release
 - Draft release
 

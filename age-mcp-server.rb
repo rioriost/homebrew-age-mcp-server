@@ -14,11 +14,6 @@ class AgeMcpServer < Formula
     sha256 "697333974235ac71667023f983b95c2a2aaab2e6f12311b9875bf139c676956c"
   end
 
-  resource "mcp" do
-    url "https://files.pythonhosted.org/packages/50/cc/5c5bb19f1a0f8f89a95e25cb608b0b07009e81fd4b031e519335404e1422/mcp-1.4.1.tar.gz"
-    sha256 "b9655d2de6313f9d55a7d1df62b3c3fe27a530100cc85bf23729145b0dba4c7a"
-  end
-
   resource "ply" do
     url "https://files.pythonhosted.org/packages/e5/69/882ee5c9d017149285cab114ebeab373308ef0f874fcdac9beb90e0ac4da/ply-3.11.tar.gz"
     sha256 "00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"
@@ -26,7 +21,7 @@ class AgeMcpServer < Formula
 
   def install
     virtualenv_install_with_resources
-    system libexec/"bin/python", "-m", "pip", "install", "psycopg-binary"
+    system libexec/"bin/python", "-m", "pip", "install", "psycopg-binary", "mcp"
   end
 
   test do

@@ -21,7 +21,7 @@ class AgeMcpServer < Formula
 
   def install
     virtualenv_install_with_resources
-    system libexec/"bin/python", "-m", "pip", "install", "psycopg-binary", "mcp"
+    system libexec/"bin/python", "-m", "pip", "install", "psycopg", "mcp"
   end
 
   test do

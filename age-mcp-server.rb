@@ -30,6 +30,6 @@ class AgeMcpServer < Formula
   end
 
   test do
-    system "#{bin}/phorganize", "--help"
+    system "#{bin}/age-mcp-server", "--help"
   end
 end

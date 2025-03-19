@@ -24,13 +24,10 @@ class AgeMcpServer < Formula
     sha256 "00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"
   end
 
-  resource "psycopg" do
-    url "https://files.pythonhosted.org/packages/67/97/eea08f74f1c6dd2a02ee81b4ebfe5b558beb468ebbd11031adbf58d31be0/psycopg-3.2.6.tar.gz"
-    sha256 "16fa094efa2698f260f2af74f3710f781e4a6f226efe9d1fd0c37f384639ed8a"
-  end
-
   def install
+    system libexec/"bin/python", "-m", "pip", "install", "--upgrade", "pip"
     virtualenv_install_with_resources
+    system libexec/"bin/python", "-m", "pip", "install", "psycopg-binary"
   end
 
   test do

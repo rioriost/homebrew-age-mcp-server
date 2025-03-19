@@ -1,4 +1,4 @@
-class Agemcpserver < Formula
+class AgeMcpServer < Formula
   include Language::Python::Virtualenv
 
   desc "Apache AGE MCP Server"

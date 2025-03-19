@@ -45,7 +45,7 @@ For configuration, see [Add the Filesystem MCP Server](https://modelcontextproto
 - with brew
 
 ```bash
-brew tap age-mcp-server
+brew tap rioriost/age-mcp-server
 brew install age-mcp-server
 ```
 
@@ -108,7 +108,7 @@ Add the server to your `claude_desktop_config.json` as followings
 {
   "mcpServers": {
     "age-manager": {
-      "command": "~/.local/bin/uv",
+      "command": "/Users/your_username/.local/bin/uv",
       "args": [
         "--directory",
         "/path/to/your_project",
@@ -118,6 +118,7 @@ Add the server to your `claude_desktop_config.json` as followings
         "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password"
         "--graph-name",
         "FROM_AGEFREIGHTER",
+        "--debug"
       ]
     }
   }
@@ -131,6 +132,9 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 ![Can you find another customer buying more than Lisa?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_3.png)
 
 ## Release Notes
+
+### 0.1.3 Release
+- Draft release
 
 ### 0.1.2 Release
 - Draft release

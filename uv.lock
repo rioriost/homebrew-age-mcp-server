@@ -4,21 +4,19 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "age-mcp-server"
-version = "0.1.2"
+version = "0.1.4"
 source = { editable = "." }
 dependencies = [
     { name = "agefreighter" },
     { name = "mcp" },
-    { name = "pip" },
     { name = "ply" },
     { name = "psycopg" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "agefreighter", specifier = ">=1.0.0a16" },
+    { name = "agefreighter", specifier = ">=1.0.0" },
     { name = "mcp", specifier = ">=1.4.1" },
-    { name = "pip", specifier = ">=25.0.1" },
     { name = "ply", specifier = ">=3.11" },
     { name = "psycopg", specifier = ">=3.2.6" },
 ]
@@ -28,7 +26,7 @@ dev = []
 
 [[package]]
 name = "agefreighter"
-version = "1.0.0a16"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -37,9 +35,9 @@ dependencies = [
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "shtab" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f0/02/425b548e58ca12abfe71bc8583cc8d0336d6fb17dbc0ca12509f5c232e66/agefreighter-1.0.0a16.tar.gz", hash = "sha256:4e19d6a441d170cc0b58fdb418a3ef0d14ed221f29e7f91521ae55890891413c", size = 1811885 }
+sdist = { url = "https://files.pythonhosted.org/packages/73/ac/83cf66dd2f687ca91176a44714ca71afabe0a825408c31d4d6989054ac05/agefreighter-1.0.0.tar.gz", hash = "sha256:697333974235ac71667023f983b95c2a2aaab2e6f12311b9875bf139c676956c", size = 1823538 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/83/51/f0dcbc7a87bfde62d9e5516ff56121e120f5a7312ca851085e30ff51a74c/agefreighter-1.0.0a16-py3-none-any.whl", hash = "sha256:b63f446b908cba7790e3a03781478477e0fb7eb49bd1a2cc717e8ec6ee6d7ff8", size = 1845838 },
+    { url = "https://files.pythonhosted.org/packages/c5/03/14a5a51b8f9f4f46954a2486cf915d739110cce538279a96b460e2183142/agefreighter-1.0.0-py3-none-any.whl", hash = "sha256:afa90fcf4291afa4166e7bc3d3815a003dae2c2e6ed8c701606ff7ea7df0f7a1", size = 1857940 },
 ]
 
 [[package]]
@@ -212,15 +210,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/dc/4fc7c0283abe0981e3b89f9b332a134e237dd476b0c018e1e21083310c31/numpy-2.2.4-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:ee4d528022f4c5ff67332469e10efe06a267e32f4067dc76bb7e2cddf3cd25ff", size = 17879998 },
     { url = "https://files.pythonhosted.org/packages/e5/2b/878576190c5cfa29ed896b518cc516aecc7c98a919e20706c12480465f43/numpy-2.2.4-cp313-cp313t-win32.whl", hash = "sha256:05c076d531e9998e7e694c36e8b349969c56eadd2cdcd07242958489d79a7286", size = 6366896 },
     { url = "https://files.pythonhosted.org/packages/3e/05/eb7eec66b95cf697f08c754ef26c3549d03ebd682819f794cb039574a0a6/numpy-2.2.4-cp313-cp313t-win_amd64.whl", hash = "sha256:188dcbca89834cc2e14eb2f106c96d6d46f200fe0200310fc29089657379c58d", size = 12739119 },
-]
-
-[[package]]
-name = "pip"
-version = "25.0.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/70/53/b309b4a497b09655cb7e07088966881a57d082f48ac3cb54ea729fd2c6cf/pip-25.0.1.tar.gz", hash = "sha256:88f96547ea48b940a3a385494e181e29fb8637898f88d88737c5049780f196ea", size = 1950850 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/bc/b7db44f5f39f9d0494071bddae6880eb645970366d0a200022a1a93d57f5/pip-25.0.1-py3-none-any.whl", hash = "sha256:c46efd13b6aa8279f33f2864459c8ce587ea6a1a59ee20de055868d8f7688f7f", size = 1841526 },
 ]
 
 [[package]]

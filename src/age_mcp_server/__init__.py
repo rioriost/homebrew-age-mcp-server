@@ -30,6 +30,13 @@ def main() -> None:
         help="Name of the graph to be operated on",
     )
     parser.add_argument(
+        "-w",
+        "--allow-write",
+        action="store_true",
+        default=False,
+        help="Allow write operations",
+    )
+    parser.add_argument(
         "--debug", action="store_true", default=False, help="Enable debug logging"
     )
 
@@ -47,6 +54,7 @@ def main() -> None:
         server.main(
             pg_con_str=args.pg_con_str,
             graph_name=args.graph_name,
+            allow_write=args.allow_write,
             log_level=logging.DEBUG if args.debug else logging.INFO,
         )
     )

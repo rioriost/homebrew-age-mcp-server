@@ -24,15 +24,16 @@ class CypherQueryFormatter:
     """Utility class for formatting Cypher queries for Apache AGE."""
 
     @staticmethod
-    def format_query(graph_name: str, cypher_query: str) -> str:
+    def format_query(graph_name: str, cypher_query: str, allow_write: bool) -> str:
         """
         Format the provided Cypher query for Apache AGE.
 
         Raises:
             ValueError: If the query is unsafe or incorrectly formatted.
         """
-        if not CypherQueryFormatter.is_safe_cypher_query(cypher_query):
-            raise ValueError("Unsafe query")
+        if not allow_write:
+            if not CypherQueryFormatter.is_safe_cypher_query(cypher_query):
+                raise ValueError("Unsafe query")
 
         # Append LIMIT 50 if no limit is specified.
         if "limit" not in cypher_query.lower():
@@ -99,12 +100,15 @@ class CypherQueryFormatter:
 
 
 class PostgreSQLAGE:
-    def __init__(self, pg_con_str: str, graph_name: str, log_level: int):
+    def __init__(
+        self, pg_con_str: str, graph_name: str, allow_write: bool, log_level: int
+    ):
         """Initialize connection to the PostgreSQL database"""
         log.setLevel(log_level)
         log.debug(f"Initializing database connection to {pg_con_str}")
         self.pg_con_str = pg_con_str
         self.graph_name = graph_name
+        self.allow_write = allow_write
         self.con: Connection
         try:
             self.con = Connection.connect(
@@ -122,7 +126,11 @@ class PostgreSQLAGE:
         log.debug(f"Executing query: {query}")
         try:
             cur = self.con.cursor(row_factory=dict_row)
-            cypher_query = CypherQueryFormatter.format_query(self.graph_name, query)
+            cypher_query = CypherQueryFormatter.format_query(
+                graph_name=self.graph_name,
+                cypher_query=query,
+                allow_write=self.allow_write,
+            )
             log.debug(f"Formatted query: {cypher_query}")
             cur.execute(cypher_query, params)
             results = cur.fetchall()
@@ -139,12 +147,17 @@ class PostgreSQLAGE:
             raise
 
 
-async def main(pg_con_str: str, graph_name: str, log_level: int) -> None:
+async def main(
+    pg_con_str: str, graph_name: str, allow_write: bool, log_level: int
+) -> None:
     log.setLevel(log_level)
     log.info(f"Connecting to PostgreSQL with connection string: {pg_con_str}")
 
     db = PostgreSQLAGE(
-        pg_con_str=pg_con_str, graph_name=graph_name, log_level=log_level
+        pg_con_str=pg_con_str,
+        graph_name=graph_name,
+        allow_write=allow_write,
+        log_level=log_level,
     )
     server = Server("age-manager")
 

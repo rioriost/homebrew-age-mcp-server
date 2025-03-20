@@ -16,6 +16,7 @@ Apache AGE MCP Server
 - [Prerequisites](#prerequisites)
 - [Install](#install)
 - [Usage](#usage)
+- [Write Operations](#write-operations)
 - [Release Notes](#release-notes)
 - [For More Information](#for-more-information)
 - [License](#license)
@@ -158,10 +159,36 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 ![Show me a graph schema](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_1.png)
 ![Can you pick up a customer and calculate the sum of purchases?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_2.png)
 ![Can you find another customer buying more than Lisa?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_3.png)
+![Can you find another product that Lisa didn't buy?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_4.png)
+![Can you add a fact that Lisa bought a product, ID 10?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_5.png)
 
 ![Claude on Windows](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/Claude_Win.png)
 
+## Write Operations
+
+AGE-MCP-Server prohibits write operations by default for safety. If you want to enable write operations, you can use the `--allow-write` flag.
+
+```json
+{
+  "mcpServers": {
+    "age-manager": {
+      "command": "age-mcp-server",
+      "args": [
+        "--pg-con-str",
+        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
+        "--graph-name",
+        "FROM_AGEFREIGHTER",
+        "--allow-write"
+      ]
+    }
+  }
+}
+```
+
 ## Release Notes
+
+### 0.1.8 Release
+- Add `--allow-write` flag
 
 ### 0.1.7 Release
 - Add Windows support

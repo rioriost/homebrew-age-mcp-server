@@ -3,8 +3,8 @@ class AgeMcpServer < Formula
 
   desc "Apache AGE MCP Server"
   homepage "https://github.com/rioriost/homebrew-age-mcp-server/"
-  url "https://files.pythonhosted.org/packages/26/16/1c0933392c2f6e28f7cfc1ffc1a38b042e8c692d5ea7de7e6ed760be89d2/age_mcp_server-0.1.7.tar.gz"
-  sha256 "9e0994ec359bc453e0aeb0b29458d1ea5b0817b595d0c4d68f81b2114c442094"
+  url "https://files.pythonhosted.org/packages/9e/b4/82c22ed520a94cef07c7d104ae4f519d558389717a41416defd075a71ca5/age_mcp_server-0.1.8.tar.gz"
+  sha256 "ff48be1e3b9d04b052e6803fe54bcf315df3b8f9d105bd6143cd648610f29f77"
   license "MIT"
 
   depends_on "python@3.13"

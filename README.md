@@ -93,7 +93,7 @@ Add the server to your `claude_desktop_config.json` as followings
       "command": "age-mcp-server",
       "args": [
         "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password"
+        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
         "--graph-name",
         "FROM_AGEFREIGHTER",
       ]
@@ -115,7 +115,7 @@ Add the server to your `claude_desktop_config.json` as followings
         "run",
         "age-mcp-server",
         "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password"
+        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
         "--graph-name",
         "FROM_AGEFREIGHTER",
         "--debug"
@@ -132,6 +132,9 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 ![Can you find another customer buying more than Lisa?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_3.png)
 
 ## Release Notes
+
+### 0.1.6 Release
+- Fix parser for `RETURN` values
 
 ### 0.1.5 Release
 - Draft release

@@ -38,6 +38,10 @@ class CypherQueryFormatter:
         if "limit" not in cypher_query.lower():
             cypher_query += " LIMIT 50"
 
+        # Claude misunderstands the Cypher definition
+        if "cast" in cypher_query.lower():
+            raise ValueError("'CAST' is not a reserved keyword in Cypher")
+
         returns = CypherQueryFormatter.get_return_values(cypher_query)
         log.debug(f"Return values: {returns}")
 
@@ -74,13 +78,21 @@ class CypherQueryFormatter:
 
         for op, opr, *_ in result:
             if op == "RETURN" or op == "RETURN_DISTINCT":
+                log.debug(f"Returning values from query: {opr}")
                 results = []
                 for v in opr:
                     if isinstance(v, str):
                         results.append(v.split(".")[0])
                     elif isinstance(v, tuple):
-                        if v[0] == "alias":
-                            results.append(v[2])
+                        match v[0]:
+                            case "alias":
+                                results.append(v[-1])
+                            case "property":
+                                results.append(v[-1])
+                            case "func_call":
+                                results.append(v[1])
+                            case "":
+                                pass
                 return list(set(results))
 
         return []
@@ -123,6 +135,7 @@ class PostgreSQLAGE:
                 return [count]
         except Exception as e:
             log.error(f"Database error executing query: {e}\n{query}")
+            self.con.rollback()  # Roll back to clear the error state
             raise
 
 

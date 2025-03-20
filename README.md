@@ -81,10 +81,15 @@ python -m pip install age-mcp-server
 
 ## Usage
 
-- brew on macOS
+- on macOS
 `claude_desktop_config.json` is located in `~/Library/Application Support/Claude/`.
 
-Add the server to your `claude_desktop_config.json` as followings
+- on Windows
+You need to create a new `claude_desktop_config.json` under `%APPDATA%\Claude`.
+
+- Homebrew on macOS
+
+Homebrew installs `age-mcp-server` into $PATH.
 
 ```json
 {
@@ -104,6 +109,8 @@ Add the server to your `claude_desktop_config.json` as followings
 
 - uv / Pyhon venv
 
+On macOS:
+
 ```json
 {
   "mcpServers": {
@@ -118,7 +125,28 @@ Add the server to your `claude_desktop_config.json` as followings
         "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
         "--graph-name",
         "FROM_AGEFREIGHTER",
-        "--debug"
+      ]
+    }
+  }
+}
+```
+
+On Windows:
+
+```json
+{
+  "mcpServers": {
+    "age-manager": {
+      "command": "C:\\Users\\USER\\.local\\bin\\uv.exe",
+      "args": [
+        "--directory",
+        "C:\\path\\to\\your_project",
+        "run",
+        "age-mcp-server",
+        "--pg-con-str",
+        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
+        "--graph-name",
+        "FROM_AGEFREIGHTER",
       ]
     }
   }
@@ -131,7 +159,12 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 ![Can you pick up a customer and calculate the sum of purchases?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_2.png)
 ![Can you find another customer buying more than Lisa?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_3.png)
 
+![Claude on Windows](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/Claude_Win.png)
+
 ## Release Notes
+
+### 0.1.7 Release
+- Add Windows support
 
 ### 0.1.6 Release
 - Fix parser for `RETURN` values

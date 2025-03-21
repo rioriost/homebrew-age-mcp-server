@@ -174,8 +174,6 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
       "args": [
         "--pg-con-str",
         "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-        "--graph-name",
-        "FROM_AGEFREIGHTER",
         "--allow-write"
       ]
     }
@@ -184,6 +182,9 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 ```
 
 ## Release Notes
+
+### 0.2.1 Release
+- Fix a bug in node/edge creation
 
 ### 0.2.0 Release
 - Add multiple graph support

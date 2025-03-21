@@ -78,8 +78,8 @@ class CypherQueryFormatter:
             return []
 
         for op, opr, *_ in result:
+            log.debug(f"Returning values from query: {opr}")
             if op == "RETURN" or op == "RETURN_DISTINCT":
-                log.debug(f"Returning values from query: {opr}")
                 results = []
                 for v in opr:
                     if isinstance(v, str):
@@ -91,6 +91,22 @@ class CypherQueryFormatter:
                             case "property":
                                 results.append(v[-1])
                             case "func_call":
+                                results.append(v[1])
+                            case "":
+                                pass
+                return list(set(results))
+            elif op == "CREATE":
+                results = []
+                for v in opr:
+                    if isinstance(v, str):
+                        results.append(v.split(".")[0])
+                    elif isinstance(v, tuple):
+                        match v[0]:
+                            case "alias":
+                                results.append(v[-1])
+                            case "func_call":
+                                results.append(v[1])
+                            case "node":
                                 results.append(v[1])
                             case "":
                                 pass
@@ -131,6 +147,7 @@ class PostgreSQLAGE:
             log.debug(f"Formatted query: {cypher_query}")
             cur.execute(cypher_query, params)
             results = cur.fetchall()
+            cur.execute("COMMIT")
             count = len(results)
             if CypherQueryFormatter.is_safe_cypher_query(query):
                 log.debug(f"Read query returned {count} rows")
@@ -150,6 +167,7 @@ class PostgreSQLAGE:
             cur = self.con.cursor(row_factory=dict_row)
             cur.execute(query)
             results = cur.fetchall()
+            cur.execute("COMMIT")
             return results
         except Exception as e:
             log.error(f"Database error executing query: {e}\n{query}")
@@ -201,7 +219,7 @@ async def main(pg_con_str: str, allow_write: bool, log_level: int) -> None:
                     "properties": {
                         "query": {
                             "type": "string",
-                            "description": "Cypher write query to execute",
+                            "description": "Cypher write query to execute, including 'RETURN' statement",
                         },
                         "graph_name": {
                             "type": "string",

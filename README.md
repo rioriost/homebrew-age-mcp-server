@@ -100,8 +100,6 @@ Homebrew installs `age-mcp-server` into $PATH.
       "args": [
         "--pg-con-str",
         "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-        "--graph-name",
-        "FROM_AGEFREIGHTER",
       ]
     }
   }
@@ -124,8 +122,6 @@ On macOS:
         "age-mcp-server",
         "--pg-con-str",
         "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-        "--graph-name",
-        "FROM_AGEFREIGHTER",
       ]
     }
   }
@@ -146,8 +142,6 @@ On Windows:
         "age-mcp-server",
         "--pg-con-str",
         "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-        "--graph-name",
-        "FROM_AGEFREIGHTER",
       ]
     }
   }
@@ -156,11 +150,15 @@ On Windows:
 
 After saving `claude_desktop_config.json`, start Claude Desktop Client.
 
-![Show me a graph schema](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_1.png)
-![Can you pick up a customer and calculate the sum of purchases?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_2.png)
-![Can you find another customer buying more than Lisa?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_3.png)
-![Can you find another product that Lisa didn't buy?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_4.png)
-![Can you add a fact that Lisa bought a product, ID 10?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_5.png)
+![Show me graphs on the server](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_01.png)
+![Show me a graph schema of FROM_AGEFREIGHTER](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_02.png)
+![Pick up a customer and calculate the amount of its purchase.](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_03.png)
+![Find another customer buying more than Lisa](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_04.png)
+![OK. Please make a new graph named MCP_Test](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_05.png)
+![Make a node labeled 'Person' with properties, name=Rio, age=52](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_06.png)
+![Please make an another node labeled 'Company' with properties, name=Microsoft](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_07.png)
+![Can you put a relation, "Rio WORK at Microsoft"?](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_08.png)
+![Delete the graph, MCP_Test](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_09.png)
 
 ![Claude on Windows](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/Claude_Win.png)
 
@@ -186,6 +184,11 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 ```
 
 ## Release Notes
+
+### 0.2.0 Release
+- Add multiple graph support
+- Add graph creation and deletion support
+- Obsolete `--graph-name` argument
 
 ### 0.1.8 Release
 - Add `--allow-write` flag

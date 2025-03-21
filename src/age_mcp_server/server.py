@@ -100,14 +100,11 @@ class CypherQueryFormatter:
 
 
 class PostgreSQLAGE:
-    def __init__(
-        self, pg_con_str: str, graph_name: str, allow_write: bool, log_level: int
-    ):
+    def __init__(self, pg_con_str: str, allow_write: bool, log_level: int):
         """Initialize connection to the PostgreSQL database"""
         log.setLevel(log_level)
         log.debug(f"Initializing database connection to {pg_con_str}")
         self.pg_con_str = pg_con_str
-        self.graph_name = graph_name
         self.allow_write = allow_write
         self.con: Connection
         try:
@@ -120,14 +117,14 @@ class PostgreSQLAGE:
             sys.exit(1)
 
     def _execute_query(
-        self, query: str, params: dict[str, Any] | None = None
+        self, graph_name: str, query: str, params: dict[str, Any] | None = None
     ) -> list[dict[str, Any]]:
         """Execute a Cypher query and return results as a list of dictionaries"""
         log.debug(f"Executing query: {query}")
         try:
             cur = self.con.cursor(row_factory=dict_row)
             cypher_query = CypherQueryFormatter.format_query(
-                graph_name=self.graph_name,
+                graph_name=graph_name,
                 cypher_query=query,
                 allow_write=self.allow_write,
             )
@@ -146,16 +143,26 @@ class PostgreSQLAGE:
             self.con.rollback()  # Roll back to clear the error state
             raise
 
+    def _execute_sql(self, query: str) -> list[dict[str, Any]]:
+        """Execute a standard query and return results as a list of dictionaries"""
+        log.debug(f"Executing query: {query}")
+        try:
+            cur = self.con.cursor(row_factory=dict_row)
+            cur.execute(query)
+            results = cur.fetchall()
+            return results
+        except Exception as e:
+            log.error(f"Database error executing query: {e}\n{query}")
+            self.con.rollback()  # Roll back to clear the error state
+            raise
 
-async def main(
-    pg_con_str: str, graph_name: str, allow_write: bool, log_level: int
-) -> None:
+
+async def main(pg_con_str: str, allow_write: bool, log_level: int) -> None:
     log.setLevel(log_level)
     log.info(f"Connecting to PostgreSQL with connection string: {pg_con_str}")
 
     db = PostgreSQLAGE(
         pg_con_str=pg_con_str,
-        graph_name=graph_name,
         allow_write=allow_write,
         log_level=log_level,
     )
@@ -178,8 +185,12 @@ async def main(
                             "type": "string",
                             "description": "Cypher read query to execute",
                         },
+                        "graph_name": {
+                            "type": "string",
+                            "description": "Name of the graph to operate",
+                        },
                     },
-                    "required": ["query"],
+                    "required": ["query", "graph_name"],
                 },
             ),
             types.Tool(
@@ -192,8 +203,47 @@ async def main(
                             "type": "string",
                             "description": "Cypher write query to execute",
                         },
+                        "graph_name": {
+                            "type": "string",
+                            "description": "Name of the graph to operate",
+                        },
                     },
-                    "required": ["query"],
+                    "required": ["query", "graph_name"],
+                },
+            ),
+            types.Tool(
+                name="create-age-graph",
+                description="Create a new graph in the AGE",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "graph_name": {
+                            "type": "string",
+                            "description": "Name of the graph to create",
+                        },
+                    },
+                    "required": ["graph_name"],
+                },
+            ),
+            types.Tool(
+                name="drop-age-graph",
+                description="Drop a graph in the AGE",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "graph_name": {
+                            "type": "string",
+                            "description": "Name of the graph to drop",
+                        },
+                    },
+                    "required": ["graph_name"],
+                },
+            ),
+            types.Tool(
+                name="list-age-graphs",
+                description="List all graphs in the AGE",
+                inputSchema={
+                    "type": "object",
                 },
             ),
             types.Tool(
@@ -201,6 +251,13 @@ async def main(
                 description="List all node types, their attributes and their relationships TO other node-types in the AGE",
                 inputSchema={
                     "type": "object",
+                    "properties": {
+                        "graph_name": {
+                            "type": "string",
+                            "description": "Name of the graph to create",
+                        },
+                    },
+                    "required": ["graph_name"],
                 },
             ),
         ]
@@ -213,18 +270,20 @@ async def main(
         try:
             if name == "get-age-schema":
                 node_results = db._execute_query(
-                    """
+                    graph_name=arguments["graph_name"],
+                    query="""
                       MATCH (n)
                       UNWIND labels(n) AS label
                       RETURN DISTINCT label, collect(DISTINCT keys(n)) AS properties
-                    """
+                    """,
                 )
                 log.debug(f"Node results: {node_results}")
                 edge_results = db._execute_query(
-                    """
+                    graph_name=arguments["graph_name"],
+                    query="""
                       MATCH (a)-[r]->(b)
                       RETURN DISTINCT type(r) AS rel_type, collect(DISTINCT labels(a)) AS from_labels, collect(DISTINCT labels(b)) AS to_labels
-                    """
+                    """,
                 )
                 log.debug(f"Edge results: {edge_results}")
                 nodes_dict = {}
@@ -283,16 +342,42 @@ async def main(
                     )
                 ]
 
+            elif name == "create-age-graph":
+                if not allow_write:
+                    raise PermissionError("Not allowed to create graph")
+                query = "SELECT create_graph('{}')".format(arguments["graph_name"])
+                log.info(f"Creating graph with name {arguments['graph_name']}")
+                results = db._execute_sql(query=query)
+                return [types.TextContent(type="text", text=str(results))]
+
+            elif name == "drop-age-graph":
+                if not allow_write:
+                    raise PermissionError("Not allowed to drop graph")
+                query = "SELECT drop_graph('{}', True)".format(arguments["graph_name"])
+                log.info(f"Dropping graph with name {arguments['graph_name']}")
+                results = db._execute_sql(query=query)
+                return [types.TextContent(type="text", text=str(results))]
+
+            elif name == "list-age-graphs":
+                query = "SELECT name FROM ag_graph"
+                log.info("Listing graphs")
+                results = db._execute_sql(query=query)
+                return [types.TextContent(type="text", text=str(results))]
+
             elif name == "read-age-cypher":
                 if not CypherQueryFormatter.is_safe_cypher_query(arguments["query"]):
                     raise ValueError("Only MATCH queries are allowed for read-query")
-                results = db._execute_query(arguments["query"])
+                results = db._execute_query(
+                    graph_name=arguments["graph_name"], query=arguments["query"]
+                )
                 return [types.TextContent(type="text", text=str(results))]
 
             elif name == "write-age-cypher":
                 if CypherQueryFormatter.is_safe_cypher_query(arguments["query"]):
                     raise ValueError("Only write queries are allowed for write-query")
-                results = db._execute_query(arguments["query"])
+                results = db._execute_query(
+                    graph_name=arguments["graph_name"], query=arguments["query"]
+                )
                 return [types.TextContent(type="text", text=str(results))]
 
             else:
@@ -308,7 +393,7 @@ async def main(
             write_stream,
             InitializationOptions(
                 server_name="age",
-                server_version="0.1.0a1",
+                server_version="0.2.0",
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={},

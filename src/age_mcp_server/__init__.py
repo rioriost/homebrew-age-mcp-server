@@ -23,13 +23,6 @@ def main() -> None:
         help="Connection string of the Azure Database for PostgreSQL",
     )
     parser.add_argument(
-        "-g",
-        "--graph-name",
-        type=str,
-        default="CYPHER_GRAPH",
-        help="Name of the graph to be operated on",
-    )
-    parser.add_argument(
         "-w",
         "--allow-write",
         action="store_true",
@@ -46,14 +39,9 @@ def main() -> None:
         print("Error: PostgreSQL connection string is required.")
         sys.exit(1)
 
-    if not args.graph_name:
-        print("Error: Graph name is required.")
-        sys.exit(1)
-
     asyncio.run(
         server.main(
             pg_con_str=args.pg_con_str,
-            graph_name=args.graph_name,
             allow_write=args.allow_write,
             log_level=logging.DEBUG if args.debug else logging.INFO,
         )

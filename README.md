@@ -183,6 +183,9 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 
 ## Release Notes
 
+### 0.2.3 Release
+- Dependency Update
+
 ### 0.2.2 Release
 - Drop a conditional test of `CREATE` operation by adding `RETURN` to the description for `write-age-cypher` tool.
 

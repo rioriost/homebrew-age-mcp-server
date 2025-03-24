@@ -95,22 +95,6 @@ class CypherQueryFormatter:
                             case "":
                                 pass
                 return list(set(results))
-            elif op == "CREATE":
-                results = []
-                for v in opr:
-                    if isinstance(v, str):
-                        results.append(v.split(".")[0])
-                    elif isinstance(v, tuple):
-                        match v[0]:
-                            case "alias":
-                                results.append(v[-1])
-                            case "func_call":
-                                results.append(v[1])
-                            case "node":
-                                results.append(v[1])
-                            case "":
-                                pass
-                return list(set(results))
 
         return []
 
@@ -411,7 +395,7 @@ async def main(pg_con_str: str, allow_write: bool, log_level: int) -> None:
             write_stream,
             InitializationOptions(
                 server_name="age",
-                server_version="0.2.0",
+                server_version="0.2.1",
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={},

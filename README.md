@@ -148,6 +148,24 @@ On Windows:
 }
 ```
 
+If you need to hide the password or to use Entra ID, you can set `--pg-con-str` as follows.
+
+```
+{
+  "mcpServers": {
+    "age-manager": {
+        ...
+        "--pg-con-str",
+        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username",
+        ...
+      ]
+    }
+  }
+}
+```
+
+And, you need to set `PGPASSWORD` env variable, or to [install Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) and [sign into Azure](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) with your Azure account.
+
 After saving `claude_desktop_config.json`, start Claude Desktop Client.
 
 ![Show me graphs on the server](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/query_01.png)
@@ -182,6 +200,9 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 ```
 
 ## Release Notes
+
+### 0.2.5 Release
+- Support connection with Entra ID
 
 ### 0.2.4 Release
 - Dependency Update

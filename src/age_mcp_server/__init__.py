@@ -5,6 +5,7 @@ import argparse
 import asyncio
 import logging
 import os
+import subprocess
 import sys
 
 from . import server
@@ -39,9 +40,39 @@ def main() -> None:
         print("Error: PostgreSQL connection string is required.")
         sys.exit(1)
 
+    conn_dict = dict(item.split("=", 1) for item in args.pg_con_str.split())
+    if not conn_dict.get("password"):
+        # Try to get password from env variable
+        conn_dict["password"] = os.environ.get("PGPASSWORD", "")
+        log.info("env:" + conn_dict["password"])
+        if not conn_dict["password"]:
+            # Try to get password using azure cli
+            conn_dict["password"] = subprocess.check_output(
+                [
+                    "az",
+                    "account",
+                    "get-access-token",
+                    "--resource",
+                    "https://ossrdbms-aad.database.windows.net",
+                    "--query",
+                    "accessToken",
+                    "--output",
+                    "tsv",
+                ],
+                stderr=subprocess.DEVNULL,
+                text=True,
+            ).strip()
+            log.info("entra:" + conn_dict["password"])
+
+    if not conn_dict["password"]:
+        print(
+            "Error: Could not find PGPASSOWRD env var or Entra ID token to connect the server."
+        )
+        sys.exit(1)
+
     asyncio.run(
         server.main(
-            pg_con_str=args.pg_con_str,
+            pg_con_str=" ".join({f"{k}={v}" for k, v in conn_dict.items()}),
             allow_write=args.allow_write,
             log_level=logging.DEBUG if args.debug else logging.INFO,
         )

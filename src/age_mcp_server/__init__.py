@@ -44,7 +44,6 @@ def main() -> None:
     if not conn_dict.get("password"):
         # Try to get password from env variable
         conn_dict["password"] = os.environ.get("PGPASSWORD", "")
-        log.info("env:" + conn_dict["password"])
         if not conn_dict["password"]:
             # Try to get password using azure cli
             conn_dict["password"] = subprocess.check_output(
@@ -62,11 +61,10 @@ def main() -> None:
                 stderr=subprocess.DEVNULL,
                 text=True,
             ).strip()
-            log.info("entra:" + conn_dict["password"])
 
     if not conn_dict["password"]:
         print(
-            "Error: Could not find PGPASSOWRD env var or Entra ID token to connect the server."
+            "Error: Could not find PGPASSWORD env var or Entra ID token to connect the server."
         )
         sys.exit(1)
 

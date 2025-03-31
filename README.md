@@ -201,6 +201,9 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 
 ## Release Notes
 
+### 0.2.6 Release
+- Fix a typo
+
 ### 0.2.5 Release
 - Support connection with Entra ID
 

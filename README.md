@@ -15,7 +15,8 @@ Apache AGE MCP Server
 
 - [Prerequisites](#prerequisites)
 - [Install](#install)
-- [Usage](#usage)
+- [Usage with Claude](#usage-with-claude)
+- [Usage with Visual Studio Code Insiders](#usage-with-visual-studio-code-insiders)
 - [Write Operations](#write-operations)
 - [Release Notes](#release-notes)
 - [For More Information](#for-more-information)
@@ -39,7 +40,8 @@ Download from [Claude Desktop Client](https://claude.ai/download) or,
 brew install claude
 ```
 
-For configuration, see [Add the Filesystem MCP Server](https://modelcontextprotocol.io/quickstart/user).
+- Visual Studio Code Insiders
+Download from [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
 
 ## Install
 
@@ -80,7 +82,7 @@ python -m venv venv
 python -m pip install age-mcp-server
 ```
 
-## Usage
+## Usage with Claude
 
 - on macOS
 `claude_desktop_config.json` is located in `~/Library/Application Support/Claude/`.
@@ -180,6 +182,46 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 
 ![Claude on Windows](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/Claude_Win.png)
 
+## Usage with Visual Studio Code Insiders
+
+After installing, [Preferences]->[Settings] and input `mcp` to [Search settings].
+
+![MCP Settings in Preferences](images/vscode_mcp_settings.png)
+
+Edit the settings.json as followings:
+
+```json
+{
+    "mcp": {
+        "inputs": [],
+        "servers": {
+            "age-manager": {
+            "command": "/Users/your_user_name/.local/bin/uv",
+            "args": [
+                "--directory",
+                "/path/to/your_project",
+                "run",
+                "age-mcp-server",
+                "--pg-con-str",
+                "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
+                "--debug"
+            ]
+            }
+        }
+    }
+}
+```
+
+And then, you'll see `start` to start the AGE MCP Server.
+
+Switch the Chat window to `agent` mode.
+
+![VSCode Agent](images/vscode_chat_01.png)
+
+Now, you can play with your graph data via Visual Studio Code!
+
+![VSCode Agent](images/vscode_chat_02.png)
+
 ## Write Operations
 
 AGE-MCP-Server prohibits write operations by default for safety. If you want to enable write operations, you can use the `--allow-write` flag.
@@ -200,6 +242,9 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 ```
 
 ## Release Notes
+
+### 0.2.7 Release
+- Add support for VSCode Insiders
 
 ### 0.2.6 Release
 - Fix a typo

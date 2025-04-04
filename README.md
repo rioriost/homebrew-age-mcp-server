@@ -41,7 +41,11 @@ brew install claude
 ```
 
 - Visual Studio Code Insiders
-Download from [Visual Studio Code Insiders](https://code.visualstudio.com/insiders/)
+Download from [Visual Studio Code](https://code.visualstudio.com/download) or,
+
+```bash
+brew intall visual-studio-code
+```
 
 ## Install
 
@@ -182,7 +186,7 @@ After saving `claude_desktop_config.json`, start Claude Desktop Client.
 
 ![Claude on Windows](https://raw.githubusercontent.com/rioriost/homebrew-age-mcp-server/main/images/Claude_Win.png)
 
-## Usage with Visual Studio Code Insiders
+## Usage with Visual Studio Code
 
 After installing, [Preferences]->[Settings] and input `mcp` to [Search settings].
 
@@ -242,6 +246,9 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 ```
 
 ## Release Notes
+
+### 0.2.8 Release
+- Add support for VSCode(Stable)
 
 ### 0.2.7 Release
 - Add support for VSCode Insiders

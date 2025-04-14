@@ -395,7 +395,7 @@ async def main(pg_con_str: str, allow_write: bool, log_level: int) -> None:
             write_stream,
             InitializationOptions(
                 server_name="age",
-                server_version="0.2.2",
+                server_version="0.2.8",
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={},

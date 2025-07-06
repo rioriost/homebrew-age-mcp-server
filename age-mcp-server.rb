@@ -3,15 +3,15 @@ class AgeMcpServer < Formula
 
   desc "Apache AGE MCP Server"
   homepage "https://github.com/rioriost/homebrew-age-mcp-server/"
-  url "https://files.pythonhosted.org/packages/51/f4/44b09b532db80e1a64caf53ec670c0354d31832ddd0b5042f2302a127774/age_mcp_server-0.2.17.tar.gz"
-  sha256 "f003ea7b0e4ae223ebbac9c0ddfefae5271d84bca5cae0779de5ac65e945e775"
+  url "https://files.pythonhosted.org/packages/ba/64/1fa2e34f0421abe7e4945e5c79000c2d42301b11ac67fc78676fcd2c76e4/age_mcp_server-0.2.18.tar.gz"
+  sha256 "cf9a5e31f6e225be8d28f76dd00fc9ec330a3c3426b3137bd96ba19c614ca033"
   license "MIT"
 
   depends_on "python@3.13"
 
   resource "agefreighter" do
-    url "https://files.pythonhosted.org/packages/fb/bd/a6a8078e99313ad20799d85dcea9ea2afbdb729f7472fc47b2c9737a8dc7/agefreighter-1.0.9.tar.gz"
-    sha256 "17053fb16abd4b79bd6c8da1bb51e9c3c75a0d31b91fc04f62fd6b0bbce475b6"
+    url "https://files.pythonhosted.org/packages/49/24/e61ad001fc4df20393dbf18fab864d3b2688ea9cf4417499eea7366a7d17/agefreighter-1.0.10.tar.gz"
+    sha256 "68e0974662946415fbb4dc592bd419aac80fb56e6badd2deffaeaefbb43a6409"
   end
 
   resource "ply" do

@@ -1,14 +1,14 @@
 [project]
 name = "age-mcp-server"
 authors = [{ name = "Rio Fujita", email = "rifujita@microsoft.com" }]
-version = "0.2.22"
+version = "0.2.23"
 license = { file = "LICENSE" }
 description = "Apache AGE MCP Server"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.13"
 dependencies = [
     "agefreighter>=1.0.11",
-    "mcp>=1.12.4",
+    "mcp>=1.13.0",
     "ply>=3.11",
     "psycopg[binary,pool]>=3.2.9",
 ]

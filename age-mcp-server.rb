@@ -10,8 +10,8 @@ class AgeMcpServer < Formula
   depends_on "python@3.13"
 
   resource "agefreighter" do
-    url "https://files.pythonhosted.org/packages/4d/42/70415f1a0b954d9223a67dfb0c3b3426c0c461eb14ce9ac80ff13c2a13ee/agefreighter-1.0.12.tar.gz"
-    sha256 "6413a4c54bc7a6aea65357fef40a41fc6967c855929e4ac3ee11f564e6df30d5"
+    url "https://files.pythonhosted.org/packages/a5/76/fee760bbffb8fd3ae1b9384e9a4576a29ae720d94d18d86e5cb338633dc1/agefreighter-1.0.15.tar.gz"
+    sha256 "040ac380fa0bd6d68bbae316d2fcb6ce731c96a149187e1f0b661c8b22c29e0c"
   end
 
   resource "ply" do

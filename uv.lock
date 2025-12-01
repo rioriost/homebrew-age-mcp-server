@@ -4,7 +4,7 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "age-mcp-server"
-version = "0.2.34"
+version = "0.2.35"
 source = { editable = "." }
 dependencies = [
     { name = "agefreighter" },
@@ -15,7 +15,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agefreighter", specifier = ">=1.0.22" },
+    { name = "agefreighter", specifier = ">=1.0.23" },
     { name = "mcp", specifier = ">=1.22.0" },
     { name = "ply", specifier = ">=3.11" },
     { name = "psycopg", extras = ["binary", "pool"], specifier = ">=3.2.13" },
@@ -26,7 +26,7 @@ dev = []
 
 [[package]]
 name = "agefreighter"
-version = "1.0.22"
+version = "1.0.23"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -35,9 +35,9 @@ dependencies = [
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "shtab" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/46/4eef21caf7e8370ae10111c8b190eb32e9b4e949db5190fae7ec69396f15/agefreighter-1.0.22.tar.gz", hash = "sha256:f6be56eed976606b773cb594bd08b7b64777770a5175c111d5dcf1c8ac6864e0", size = 1812292 }
+sdist = { url = "https://files.pythonhosted.org/packages/64/c8/cb6bf846082cc3551252ce1dfd2eb6a6dc3b00bf3c2014b41ba6c4128150/agefreighter-1.0.23.tar.gz", hash = "sha256:70b6e2e096f22e58c0443ccbae807cf7ba9ace1125bfa37dc1d53f85c18f299c", size = 1812310 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a5/a6/fb1a72d0eb22720258ef7933ff2a6f9ce5f166e5e64fe368f2830f894b4f/agefreighter-1.0.22-py3-none-any.whl", hash = "sha256:bac722e1600bd1cf97d97bf536fa3efd68eb3a88e7e579bce32f640d2c5da115", size = 1846250 },
+    { url = "https://files.pythonhosted.org/packages/e9/b7/be28ea6eb0f56016e5b23785e5895b32389f04d16da4a183e384dc207619/agefreighter-1.0.23-py3-none-any.whl", hash = "sha256:0464cdfdd838dda0bfc858ecddfd04ba9efe33a435f09a0ad4c6cce765b1d946", size = 1846257 },
 ]
 
 [[package]]

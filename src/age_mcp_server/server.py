@@ -112,6 +112,23 @@ class PostgreSQLAGE:
                 self.pg_con_str
                 + " options='-c search_path=ag_catalog,\"$user\",public'"
             )
+            # Load AGE extension to ensure cypher() function is available
+            # This fixes the "unhandled cypher(cstring) function call" error
+            # that occurs when AGE is not preloaded in PostgreSQL
+            try:
+                cur = self.con.cursor()
+                cur.execute("LOAD 'age'")
+                self.con.commit()
+                log.debug("AGE extension loaded successfully")
+            except Exception as load_error:
+                # AGE might already be loaded via shared_preload_libraries
+                # Check if it's a "duplicate" error which is safe to ignore
+                error_msg = str(load_error).lower()
+                if "already" in error_msg or "duplicate" in error_msg:
+                    log.debug(f"AGE extension already loaded: {load_error}")
+                else:
+                    log.warning(f"Could not load AGE extension: {load_error}")
+                    # Continue anyway as the extension might be preloaded
         except Exception as e:
             log.error(f"Failed to connect to PostgreSQL database: {e}")
             sys.exit(1)

@@ -247,6 +247,10 @@ AGE-MCP-Server prohibits write operations by default for safety. If you want to 
 
 ## Release Notes
 
+### 0.2.42 Release
+- Dependency update
+
+
 ### 0.2.41 Release
 - Dependency Update
 

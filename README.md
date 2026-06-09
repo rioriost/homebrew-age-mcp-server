@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/rioriost-homebrew-age-mcp-server-badge.png)](https://mseep.ai/app/rioriost-homebrew-age-mcp-server)
+
 # AGE-MCP-Server
 
 Obsoleted

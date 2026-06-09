@@ -1,5 +1,7 @@
 # AGE-MCP-Server
 
+Obsoleted
+
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
 

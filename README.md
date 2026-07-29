@@ -1,255 +1,198 @@
-# AGE-MCP-Server
+# AGE MCP Server
 
-Obsoleted
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
 
-Apache AGE MCP Server
+An MCP server for querying [Apache AGE](https://age.apache.org/) graphs in PostgreSQL.
 
-[Apache AGE™](https://age.apache.org/) is a PostgreSQL Graph database compatible with PostgreSQL's distributed assets and leverages graph data structures to analyze and use relationships and patterns in data.
+Version 0.3.0 makes read-only operation the secure default, adds asynchronous
+connection pooling, safe Cypher parameters and bounded cursor pagination, and
+returns MCP structured content from every tool.
 
-[Azure Database for PostgreSQL](https://azure.microsoft.com/en-us/services/postgresql/) is a managed database service that is based on the open-source Postgres database engine.
+## Requirements
 
-[Introducing support for Graph data in Azure Database for PostgreSQL (Preview)](https://techcommunity.microsoft.com/blog/adforpostgresql/introducing-support-for-graph-data-in-azure-database-for-postgresql-preview/4275628).
+- Python 3.13 or later
+- PostgreSQL with the Apache AGE extension installed and loaded
+- A database role restricted to the graphs and operations the MCP client needs
 
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Install](#install)
-- [Usage with Claude](#usage-with-claude)
-- [Usage with Visual Studio Code Insiders](#usage-with-visual-studio-code-insiders)
-- [Write Operations](#write-operations)
-- [For More Information](#for-more-information)
-- [License](#license)
-
-## Prerequisites
-
-- Python 3.13 and above
-- This module runs on [psycopg](https://www.psycopg.org/)
-- Enable the Apache AGE extension in your Azure Database for PostgreSQL instance. Login Azure Portal, go to 'server parameters' blade, and check 'AGE" on within 'azure.extensions' and 'shared_preload_libraries' parameters. See, above blog post for more information.
-- Load the AGE extension in your PostgreSQL database.
+Enable AGE in the target database:
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS age CASCADE;
 ```
 
-- Claude
-Download from [Claude Desktop Client](https://claude.ai/download) or,
-
-```bash
-brew install claude
-```
-
-- Visual Studio Code Insiders
-Download from [Visual Studio Code](https://code.visualstudio.com/download) or,
-
-```bash
-brew intall visual-studio-code
-```
-
 ## Install
 
-- with brew
-
-```bash
-brew intall rioriost/tap/age_mcp_server
-
-- with uv
+With `uv`:
 
 ```bash
 uv init your_project
 cd your_project
-uv venv
-source .venv/bin/activate
 uv add age_mcp_server
 ```
 
-- with python venv on macOS / Linux
+With a Python virtual environment:
 
 ```bash
-mkdir your_project
-cd your_project
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install age_mcp_server
 ```
 
-- with python venv on Windows
+With Homebrew:
 
 ```bash
-mkdir your_project
-cd your_project
-python -m venv venv
-.\venv\Scripts\activate
-python -m pip install age_mcp_server
+brew install rioriost/tap/age_mcp_server
 ```
 
-## Usage with Claude
+## Configure an MCP client
 
-- on macOS
-`claude_desktop_config.json` is located in `~/Library/Application Support/Claude/`.
-
-- on Windows
-You need to create a new `claude_desktop_config.json` under `%APPDATA%\Claude`.
-
-- Homebrew on macOS
-
-Homebrew installs `age_mcp_server` into $PATH.
+Avoid placing a database password in command-line arguments. Supply a connection
+string through `PG_CONNECTION_STRING` and use one of libpq's credential mechanisms,
+such as `PGPASSWORD` or a protected PostgreSQL password file.
 
 ```json
 {
   "mcpServers": {
     "age_manager": {
       "command": "age_mcp_server",
-      "args": [
-        "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-      ]
+      "env": {
+        "PG_CONNECTION_STRING": "host=db.example port=5432 dbname=postgres user=age_reader sslmode=require",
+        "PGPASSWORD": "replace-with-a-secret"
+      }
     }
   }
 }
 ```
 
-- uv / Pyhon venv
+Treat the MCP client configuration as a secret if it contains `PGPASSWORD`. A
+PostgreSQL password file or the client's secret store is preferable.
 
-On macOS:
+The connection string can still be supplied explicitly when necessary:
+
+```bash
+age_mcp_server --pg-con-str "host=db.example dbname=postgres user=age_reader sslmode=require"
+```
+
+For Microsoft Entra authentication to Azure Database for PostgreSQL, first sign in
+with the Azure CLI, then opt in to token acquisition:
+
+```bash
+age_mcp_server \
+  --pg-con-str "host=server.postgres.database.azure.com dbname=postgres user=identity sslmode=require" \
+  --azure-identity
+```
+
+## Tools
+
+Read-only mode is the default:
+
+| Tool | Purpose |
+| --- | --- |
+| `read-age-cypher` | Run a validated, parameterized, paginated read-only Cypher query |
+| `list-age-graphs` | List Apache AGE graphs |
+| `get-age-schema` | Inspect counts, directions, and sampled property types |
+
+Write tools are only advertised and accepted when the server starts with
+`--allow-write`:
+
+| Tool | Purpose |
+| --- | --- |
+| `write-age-cypher` | Run Cypher containing a mutating clause |
+| `create-age-graph` | Create a graph |
+| `drop-age-graph` | Permanently drop a graph |
+
+```bash
+age_mcp_server --allow-write
+```
+
+Use a separate, least-privileged database role for write mode. Enabling the flag
+does not grant PostgreSQL privileges that the configured role does not already have.
+
+## Safety limits
+
+- Cypher, graph names, return aliases, and graph-management arguments are safely
+  quoted or parameterized before reaching PostgreSQL.
+- Read tools run inside PostgreSQL read-only transactions.
+- `CALL` is considered side-effecting and requires write mode.
+- Read pages contain at most 50 rows. Opaque HMAC-authenticated cursors are bound to
+  the graph, query, and parameters, with a maximum offset of 100,000.
+- Cypher `$parameters` are accepted only when placeholder names exactly match a
+  JSON parameter object. The object is capped at 100,000 bytes and passed to AGE
+  through a prepared statement.
+- Write queries execute fully and return an affected-row count instead of result
+  rows.
+- Statements time out after 30 seconds by default.
+- Queries are limited to 100,000 characters and must contain one explicit `RETURN`
+  clause per query branch.
+- Raw database errors, query contents, and connection credentials are not returned
+  to MCP clients or written to normal logs.
+
+Change the timeout when needed:
+
+```bash
+age_mcp_server --statement-timeout-ms 60000
+```
+
+The timeout must be between 1 millisecond and 1 hour.
+
+Tune the asynchronous connection pool or load the AGE library for every newly
+opened pooled connection:
+
+```bash
+age_mcp_server --pool-min-size 2 --pool-max-size 8 --load-age
+```
+
+The pool must satisfy `1 <= min <= max <= 64`. `RETURN *` remains unsupported;
+list return values explicitly so Apache AGE's SQL result types can be declared.
+
+Example tool input with parameters and pagination:
 
 ```json
 {
-  "mcpServers": {
-    "age_manager": {
-      "command": "/Users/your_username/.local/bin/uv",
-      "args": [
-        "--directory",
-        "/path/to/your_project",
-        "run",
-        "age_mcp_server",
-        "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-      ]
-    }
-  }
+  "graph_name": "people",
+  "query": "MATCH (n:Person) WHERE n.age >= $minimum RETURN n.name AS name ORDER BY name",
+  "parameters": {"minimum": 18},
+  "page_size": 25
 }
 ```
 
-On Windows:
+Pass the returned `nextCursor` as `cursor` to fetch the next page.
 
-```json
-{
-  "mcpServers": {
-    "age_manager": {
-      "command": "C:\\Users\\USER\\.local\\bin\\uv.exe",
-      "args": [
-        "--directory",
-        "C:\\path\\to\\your_project",
-        "run",
-        "age_mcp_server",
-        "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-      ]
-    }
-  }
-}
+## OpenTelemetry
+
+Install the optional exporter dependencies and enable OTLP export:
+
+```bash
+python3 -m pip install "age_mcp_server[telemetry]"
+age_mcp_server --enable-telemetry --otel-service-name age-production
 ```
 
-If you need to hide the password or to use Entra ID, you can set `--pg-con-str` as follows.
+The exporter follows standard `OTEL_EXPORTER_OTLP_*` environment variables.
+Traces and metrics record operation latency, counts, and failures. Connection
+details, Cypher text, parameter values, and raw database errors are excluded.
 
-```
-{
-  "mcpServers": {
-    "age_manager": {
-        ...
-        "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username",
-        ...
-      ]
-    }
-  }
-}
+## Development
+
+Install all development dependencies and run the release gate:
+
+```bash
+make sync
+make check
 ```
 
-And, you need to set `PGPASSWORD` env variable, or to [install Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) and [sign into Azure](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) with your Azure account.
+`make check` runs Ruff, the 80% coverage gate, Bandit, the locked dependency audit,
+and package builds. The test suite includes a live Apache AGE integration test:
 
-After saving `claude_desktop_config.json`, start Claude Desktop Client.
-
-![Show me graphs on the server](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_01.png)
-![Show me a graph schema of FROM_AGEFREIGHTER](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_02.png)
-![Pick up a customer and calculate the amount of its purchase.](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_03.png)
-![Find another customer buying more than Lisa](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_04.png)
-![OK. Please make a new graph named MCP_Test](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_05.png)
-![Make a node labeled 'Person' with properties, name=Rio, age=52](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_06.png)
-![Please make an another node labeled 'Company' with properties, name=Microsoft](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_07.png)
-![Can you put a relation, "Rio WORK at Microsoft"?](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_08.png)
-![Delete the graph, MCP_Test](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/query_09.png)
-
-![Claude on Windows](https://raw.githubusercontent.com/rioriost/age_mcp_server/main/images/Claude_Win.png)
-
-## Usage with Visual Studio Code
-
-After installing, [Preferences]->[Settings] and input `mcp` to [Search settings].
-
-![MCP Settings in Preferences](images/vscode_mcp_settings.png)
-
-Edit the settings.json as followings:
-
-```json
-{
-    "mcp": {
-        "inputs": [],
-        "servers": {
-            "age_manager": {
-            "command": "/Users/your_user_name/.local/bin/uv",
-            "args": [
-                "--directory",
-                "/path/to/your_project",
-                "run",
-                "age_mcp_server",
-                "--pg-con-str",
-                "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-                "--debug"
-            ]
-            }
-        }
-    }
-}
+```bash
+AGE_TEST_CONNECTION_STRING="host=127.0.0.1 dbname=postgres user=postgres password=postgres" \
+  make integration
 ```
 
-And then, you'll see `start` to start the AGE MCP Server.
-
-Switch the Chat window to `agent` mode.
-
-![VSCode Agent](images/vscode_chat_01.png)
-
-Now, you can play with your graph data via Visual Studio Code!
-
-![VSCode Agent](images/vscode_chat_02.png)
-
-## Write Operations
-
-AGE-MCP-Server prohibits write operations by default for safety. If you want to enable write operations, you can use the `--allow-write` flag.
-
-```json
-{
-  "mcpServers": {
-    "age_manager": {
-      "command": "age_mcp_server",
-      "args": [
-        "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password",
-        "--allow-write"
-      ]
-    }
-  }
-}
-```
-
-## For More Information
-
-- Apache AGE : https://age.apache.org/
-- GitHub : https://github.com/apache/age
-- Document : https://age.apache.org/age-manual/master/index.html
+CI runs this test against the official Apache AGE PostgreSQL container. See
+[the 0.3.0 review](docs/release-0.3.0-review.md) for the completed security and
+feature review.
 
 ## License
 
-MIT License
+[MIT](LICENSE)

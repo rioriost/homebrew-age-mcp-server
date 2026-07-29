@@ -1,6 +1,6 @@
 [project]
 name = "age_mcp_server"
-version = "0.2.50"
+version = "0.3.0"
 description = "Apache AGE MCP Server"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.13"
@@ -10,7 +10,8 @@ authors = [
 ]
 dependencies = [
     "agefreighter>=1.0.33",
-    "mcp>=1.26.0",
+    "mcp>=2.0.0,<3",
+    "opentelemetry-api>=1.44.0,<2",
     "ply>=3.11",
     "psycopg>=3.3.3",
     "psycopg-pool>=3.3.0",
@@ -20,6 +21,8 @@ dependencies = [
 Homepage = "https://github.com/rioriost/age_mcp_server"
 Issues = "https://github.com/rioriost/age_mcp_server/issues"
 Repository = "https://github.com/rioriost/age_mcp_server"
+Changelog = "https://github.com/rioriost/age_mcp_server/blob/main/CHANGELOG.md"
+Security = "https://github.com/rioriost/age_mcp_server/security/policy"
 
 [project.scripts]
 age_mcp_server = "age_mcp_server:main"
@@ -29,9 +32,14 @@ test = [
     "pytest>=9",
     "pytest-cov>=7",
 ]
+telemetry = [
+    "opentelemetry-exporter-otlp>=1.44.0,<2",
+    "opentelemetry-sdk>=1.44.0,<2",
+]
 
 [dependency-groups]
 dev = [
+    "bandit>=1.9.4",
     "build>=1.2.2",
     "twine>=6.1.0",
     "ruff>=0.12.0",
@@ -45,11 +53,21 @@ build-backend = "hatchling.build"
 packages = ["src/age_mcp_server"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/age_mcp_server", "README.md", "LICENSE"]
+include = [
+    "src/age_mcp_server",
+    "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+addopts = ["--strict-config", "--strict-markers"]
+markers = [
+    "integration: requires a live PostgreSQL server with Apache AGE",
+]
 
 [tool.ruff]
 line-length = 100

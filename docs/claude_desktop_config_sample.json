@@ -6,10 +6,12 @@
         "--directory",
         "/path/to/your_project",
         "run",
-        "age_mcp_server",
-        "--pg-con-str",
-        "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username password=your_password"
-      ]
+        "age_mcp_server"
+      ],
+      "env": {
+        "PG_CONNECTION_STRING": "host=your_server.postgres.database.azure.com port=5432 dbname=postgres user=your_username sslmode=require",
+        "PGPASSWORD": "your_password"
+      }
     }
   }
 }

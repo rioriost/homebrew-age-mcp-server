@@ -38,6 +38,8 @@
 - Preserve quoted libpq connection strings.
 - Merge all discovered node properties and preserve edge label sets in schema output.
 - Report the installed package version during MCP initialization.
+- Disable psycopg automatic statement preparation so pooled connection resets cannot
+  leave its client-side prepared-statement cache out of sync with PostgreSQL.
 
 ### Changed
 

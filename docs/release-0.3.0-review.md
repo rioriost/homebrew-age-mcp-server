@@ -37,7 +37,7 @@ URL・SHA256 更新は、最終リリース成果物を公開した後に再確�
 
 ## 品質ゲート
 
-- pytest: 66 unit tests + 1 Apache AGE integration test（Apple containerで通過）
+- pytest: 67 unit tests + 1 Apache AGE integration test（Apple containerで通過）
 - coverage: 90.23%（最低基準 80%、統合テストを含む）
 - Ruff lint / format
 - Bandit static security scan

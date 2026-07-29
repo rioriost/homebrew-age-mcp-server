@@ -72,7 +72,10 @@ class PostgreSQLAGE:
             open=False,
             configure=self._configure_connection,
             reset=self._reset_connection,
-            kwargs={"application_name": "age_mcp_server"},
+            kwargs={
+                "application_name": "age_mcp_server",
+                "prepare_threshold": None,
+            },
             name="age-mcp-server",
         )
 

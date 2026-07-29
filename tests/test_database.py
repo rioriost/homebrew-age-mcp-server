@@ -6,6 +6,7 @@ from typing import Any
 import pytest
 from psycopg import sql
 
+import age_mcp_server.database as database_module
 from age_mcp_server.database import (
     DatabaseOperationError,
     PostgreSQLAGE,
@@ -307,3 +308,29 @@ def test_pool_open_failure_is_sanitized(caplog) -> None:
 def test_constructor_rejects_invalid_resource_limits(kwargs: dict[str, int]) -> None:
     with pytest.raises(ValueError):
         PostgreSQLAGE("host=unused", False, logging.INFO, **kwargs)
+
+
+def test_constructor_disables_psycopg_automatic_prepare(monkeypatch) -> None:
+    captured = {}
+
+    def fake_pool(**kwargs: Any) -> object:
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(database_module, "AsyncConnectionPool", fake_pool)
+
+    PostgreSQLAGE(
+        "host=unused",
+        allow_write=False,
+        log_level=logging.INFO,
+        pool_min_size=2,
+        pool_max_size=5,
+    )
+
+    assert captured["open"] is False
+    assert captured["min_size"] == 2
+    assert captured["max_size"] == 5
+    assert captured["kwargs"] == {
+        "application_name": "age_mcp_server",
+        "prepare_threshold": None,
+    }

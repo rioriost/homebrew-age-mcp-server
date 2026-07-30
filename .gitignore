@@ -5,3 +5,4 @@
 __pycache__/
 dist/
 *.py[cod]
+.envrc
